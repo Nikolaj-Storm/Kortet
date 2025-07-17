@@ -1,4 +1,3 @@
-#hej
 touch .nojekyll
 git add .nojekyll
 git commit -m "Disable Jekyll so placeholders survive to Actions"
