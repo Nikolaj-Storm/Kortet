@@ -1,0 +1,36 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main   # eller din primære branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) Hent koden
+      - uses: actions/checkout@v3
+
+      # 2) Inject API‑key i ALLE HTML‑filer
+      - name: Inject Google Maps API Key
+        run: |
+          # Går ind i hver HTML-fil og erstatter placeholder
+          for file in index.html zog.html; do
+            sed -i 's|\${{GOOGLE_MAPS_API_KEY}}|'"${{ secrets.GOOGLE_MAPS_API_KEY }}"'|g' "$file"
+          done
+
+      # 3) (Valgfrit) Kør dit build, hvis du har en bundler:
+      # - name: Install dependencies & Build
+      #   run: |
+      #     npm ci
+      #     npm run build
+      #   # Justér publish_dir til fx ./dist
+
+      # 4) Deploy til GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./   # eller ./dist hvis du har en build‑mappe
